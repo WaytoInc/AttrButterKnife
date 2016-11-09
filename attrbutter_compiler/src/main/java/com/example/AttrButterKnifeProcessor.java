@@ -1,15 +1,13 @@
 package com.example;
 
 
-import com.google.auto.common.MoreElements;
+import com.google.auto.common.SuperficialValidation;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,7 +27,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileObject;
 
 /**
  * Created by simple on 16/11/1.
@@ -89,7 +86,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         //遍历所有被注解了的元素
         Map<String, List<VariableElement>> map = findAndParseTargets(roundEnv);
         // 生成辅助类
-        generateBindString(map);
+        generate(map);
         return true;
     }
 
@@ -98,7 +95,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
 
         //解析 AttrBindString 注解
         for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
-//            if (!SuperficialValidation.validateElement(element)) continue;
+            if (!SuperficialValidation.validateElement(element)) continue;
 //            if (element == null || !(element instanceof VariableElement)) {
 //                continue;
 //            }
@@ -110,7 +107,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         }
         //解析 AttrBindBoolean
         for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindBoolean.class)) {
-//            if (!SuperficialValidation.validateElement(element)) continue;
+            if (!SuperficialValidation.validateElement(element)) continue;
 //            if (element == null || !(element instanceof VariableElement)) {
 //                continue;
 //            }
@@ -129,8 +126,8 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         // 获取属性所在的类名
         String className = element.getEnclosingElement().getSimpleName().toString();
         //获取包名
-        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
-        BindingSet bindingSet = BindingSet.create(className, packageName);
+//        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
+//        BindingSet bindingSet = BindingSet.create(className, packageName);
         List<VariableElement> variableElementList = map.get(className);
         if (variableElementList == null) {
             variableElementList = new ArrayList<>();
@@ -145,8 +142,8 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         // 获取属性所在的类名
         String className = element.getEnclosingElement().getSimpleName().toString();
         //获取包名
-        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
-        BindingSet bindingSet = BindingSet.create(className, packageName);
+//        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
+//        BindingSet bindingSet = BindingSet.create(className, packageName);
         List<VariableElement> variableElementList = map.get(className);
         if (variableElementList == null) {
             variableElementList = new ArrayList<>();
@@ -155,7 +152,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         variableElementList.add(variableElement);
     }
 
-    private void generateBindString(Map<String, List<VariableElement>> map) {
+    private void generate(Map<String, List<VariableElement>> map) {
         log("开始生成");
         if (null == map || map.size() == 0) {
             return;
@@ -177,22 +174,22 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
             builder.addParameter(Object.class, "typeArray");
             builder.addStatement(className + " view =(" + className + ")target");
             builder.addStatement("$T ta =($T)typeArray", TYPEARRAY, TYPEARRAY);
-
-//            className = variableElementList.get(0).getEnclosingElement()
-//                    .getSimpleName().toString();
-
+            //遍历所有的属性元素
             for (VariableElement variableElement : variableElementList) {
+
+                String varName = variableElement.getSimpleName().toString();
 
                 AttrBindString attrBindString = variableElement.getAnnotation(AttrBindString.class);
                 if (attrBindString != null) {
-                    builder.addStatement("view." + variableElement.getSimpleName().toString() +
+                    builder.addStatement("view." + varName +
                             " = ta.getString(" + attrBindString.value() + ")");
                 }
 
                 AttrBindBoolean attrBindBoolean = variableElement.getAnnotation(AttrBindBoolean.class);
                 if (attrBindBoolean != null) {
-                    builder.addStatement("view." + variableElement.getSimpleName().toString() +
-                            " = ta.getBoolean(" + attrBindBoolean.value() + "," + attrBindBoolean.default_value() + ")");
+                    builder.addStatement("view." + varName +
+                            " = ta.getBoolean(" + attrBindBoolean.value() + ","
+                            + attrBindBoolean.default_value() + ")");
                 }
 
             }
@@ -236,54 +233,8 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         }
     }
 
-
-    private void generateBindView(Map<String, List<VariableElement>> map) {
-        if (null == map || map.size() == 0) {
-            return;
-        }
-        for (String className : map.keySet()) {
-            List<VariableElement> variableElementList = map.get(className);
-            if (variableElementList == null || variableElementList.size() <= 0) {
-                continue;
-            }
-            // 获取包名
-            String packageName = variableElementList.get(0).getEnclosingElement()
-                    .getEnclosingElement().toString();
-            StringBuilder builder = new StringBuilder()
-                    .append("package ").append(packageName).append(";\n\n")
-                    .append("public class ").append(className).append(SUFFIX).append("{\n") // open class
-                    .append("    public void bind(Object target) {\n")
-                    .append("        ").append(className).append(" activity = (")
-                    .append(className).append(")target;\n");
-
-            for (VariableElement variableElement : variableElementList) {
-                BindView bindView = variableElement.getAnnotation(BindView.class);
-                log(bindView.toString());
-                builder.append("        activity.").append(variableElement.getSimpleName()
-                        .toString()).append("=(").append(variableElement.asType())
-                        .append(")activity.findViewById(").append(bindView.value()).append(");\n");
-            }
-            builder.append("    }\n}\n");
-            // write the file
-            try {
-                String bindViewClassName = packageName + "." + className + SUFFIX;
-                JavaFileObject source = processingEnv.getFiler().createSourceFile(bindViewClassName);
-                Writer writer = source.openWriter();
-                writer.write(builder.toString());
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                log(e.getMessage());
-            }
-        }
-    }
-
     private void log(String msg) {
         messager.printMessage(Diagnostic.Kind.WARNING, msg);
-    }
-
-    private void fileLog(String msg) {
-
     }
 
 }
