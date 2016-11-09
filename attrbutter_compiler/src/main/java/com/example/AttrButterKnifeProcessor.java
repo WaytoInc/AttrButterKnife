@@ -1,7 +1,7 @@
 package com.example;
 
 
-import com.google.auto.common.SuperficialValidation;
+import com.google.auto.common.MoreElements;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
     private static final ClassName VIEW = ClassName.get("android.view", "View");
     private static final ClassName TYPEARRAY = ClassName.get("android.content.res", "TypedArray");
 
-    public static final String SUFFIX = "$ViewBinder";
+    public static final String SUFFIX = "_ViewBinder";
     private Messager messager;
     private Filer filer;
 
@@ -86,59 +86,73 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Map<String, List<VariableElement>> map = new HashMap<>(); // key 是类名，value 是该类的注解元素
-//         //遍历AttrBindString注解的所有元素
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
-//            if (!SuperficialValidation.validateElement(element)) continue;
-            if (element == null || !(element instanceof VariableElement)) {
-                continue;
-            }
-            // 给属性添加的注解
-            VariableElement variableElement = (VariableElement) element;
-            // 获取属性所在的类名
-//            String className = element.getEnclosingElement().getSimpleName().toString();
-            String simpleName = AttrBindString.class.getSimpleName();
-            List<VariableElement> variableElementList = map.get(simpleName);
-            if (variableElementList == null) {
-                variableElementList = new ArrayList<>();
-                map.put(simpleName, variableElementList);
-            }
-            variableElementList.add(variableElement);
-        }
-// 遍历AttrBindBoolean注解的所有元素
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindBoolean.class)) {
-            if (element == null || !(element instanceof VariableElement)) {
-                continue;
-            }
-            // 给属性添加的注解
-            VariableElement variableElement = (VariableElement) element;
-
-            // 获取属性所在的类名
-//            String className = element.getEnclosingElement().getSimpleName().toString();
-            String simpleName = AttrBindBoolean.class.getSimpleName();
-            List<VariableElement> variableElementList = map.get(simpleName);
-            if (variableElementList == null) {
-                variableElementList = new ArrayList<>();
-                map.put(simpleName, variableElementList);
-            }
-            variableElementList.add(variableElement);
-        }
-
+        //遍历所有被注解了的元素
+        Map<String, List<VariableElement>> map = findAndParseTargets(roundEnv);
         // 生成辅助类
-//        generateBindView(map);
         generateBindString(map);
         return true;
     }
 
-    private void findAndParseTargets(RoundEnvironment roundEnv) {
-        Map<String, List<VariableElement>> map = new HashMap<>(); // key 是类名，value 是该类的注解元素
-        //
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
-            if (element == null || !(element instanceof VariableElement)) {
-                continue;
-            }
+    private Map<String, List<VariableElement>> findAndParseTargets(RoundEnvironment roundEnv) {
+        Map<String, List<VariableElement>> map = new LinkedHashMap<>(); // key 是类名，value 是该类的注解元素
 
+        //解析 AttrBindString 注解
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
+//            if (!SuperficialValidation.validateElement(element)) continue;
+//            if (element == null || !(element instanceof VariableElement)) {
+//                continue;
+//            }
+            try {
+                parseBindString(element, map);
+            } catch (Exception e) {
+
+            }
         }
+        //解析 AttrBindBoolean
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindBoolean.class)) {
+//            if (!SuperficialValidation.validateElement(element)) continue;
+//            if (element == null || !(element instanceof VariableElement)) {
+//                continue;
+//            }
+            try {
+                parseBindBoolean(element, map);
+            } catch (Exception e) {
+
+            }
+        }
+        return map;
+    }
+
+    private void parseBindString(Element element, Map<String, List<VariableElement>> map) {
+        // 给属性添加的注解
+        VariableElement variableElement = (VariableElement) element;
+        // 获取属性所在的类名
+        String className = element.getEnclosingElement().getSimpleName().toString();
+        //获取包名
+        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
+        BindingSet bindingSet = BindingSet.create(className, packageName);
+        List<VariableElement> variableElementList = map.get(className);
+        if (variableElementList == null) {
+            variableElementList = new ArrayList<>();
+            map.put(className, variableElementList);
+        }
+        variableElementList.add(variableElement);
+    }
+
+    private void parseBindBoolean(Element element, Map<String, List<VariableElement>> map) {
+        // 给属性添加的注解
+        VariableElement variableElement = (VariableElement) element;
+        // 获取属性所在的类名
+        String className = element.getEnclosingElement().getSimpleName().toString();
+        //获取包名
+        String packageName = MoreElements.getPackage(element).getQualifiedName().toString();
+        BindingSet bindingSet = BindingSet.create(className, packageName);
+        List<VariableElement> variableElementList = map.get(className);
+        if (variableElementList == null) {
+            variableElementList = new ArrayList<>();
+            map.put(className, variableElementList);
+        }
+        variableElementList.add(variableElement);
     }
 
     private void generateBindString(Map<String, List<VariableElement>> map) {
@@ -146,29 +160,26 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         if (null == map || map.size() == 0) {
             return;
         }
-        //method
-        MethodSpec.Builder builder = MethodSpec.methodBuilder("bind");
-        String packageName = null;
-        String className = null;
-        builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
-        builder.addParameter(Object.class, "target");
-        builder.addParameter(Object.class, "typeArray");
-        builder.addStatement(className + " view =(" + className + ")target");
-        builder.addStatement("$T ta =($T)typeArray", TYPEARRAY, TYPEARRAY);
 
-        for (String annoName : map.keySet()) {
-            List<VariableElement> variableElementList = map.get(annoName);
+        for (String className : map.keySet()) {
+            List<VariableElement> variableElementList = map.get(className);
             if (variableElementList == null || variableElementList.size() <= 0) {
                 continue;
             }
             // 获取包名
-
-            packageName = variableElementList.get(0).getEnclosingElement()
+            String packageName = variableElementList.get(0).getEnclosingElement()
                     .getEnclosingElement().toString();
 
+            //method
+            MethodSpec.Builder builder = MethodSpec.methodBuilder("bind");
+            builder.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+            builder.addParameter(Object.class, "target");
+            builder.addParameter(Object.class, "typeArray");
+            builder.addStatement(className + " view =(" + className + ")target");
+            builder.addStatement("$T ta =($T)typeArray", TYPEARRAY, TYPEARRAY);
 
-            className = variableElementList.get(0).getEnclosingElement()
-                    .getSimpleName().toString();
+//            className = variableElementList.get(0).getEnclosingElement()
+//                    .getSimpleName().toString();
 
             for (VariableElement variableElement : variableElementList) {
 
@@ -185,12 +196,12 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
                 }
 
             }
+            MethodSpec methodSpec = builder.build();
+            //class
+            TypeSpec typeSpec = creatTypeSpec(methodSpec, className + SUFFIX);
+            //file
+            brewJava(packageName, typeSpec);
         }
-        MethodSpec methodSpec = builder.build();
-        //class
-        TypeSpec typeSpec = creatTypeSpec(methodSpec, className + SUFFIX);
-        //file
-        brewJava(packageName, typeSpec);
     }
 
     /**

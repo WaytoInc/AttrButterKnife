@@ -1,1 +1,1 @@
-include ':app', ':attrbutter_compiler'
+include ':app', ':attrbutter_compiler', ':attrbutter_annotation'

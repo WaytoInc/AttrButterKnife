@@ -13,7 +13,7 @@ import com.example.AttrBindString;
  * Created by simple on 16/11/7.
  */
 
-public class CustomView extends View {
+public class CustomView2 extends View {
 
     @AttrBindString(R.styleable.CustomView_test_string)
     String testString;
@@ -26,11 +26,11 @@ public class CustomView extends View {
 //    float testFloat;
 //    int testInteger;
 
-    public CustomView(Context context) {
+    public CustomView2(Context context) {
         this(context, null);
     }
 
-    public CustomView(Context context, AttributeSet attrs) {
+    public CustomView2(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CustomView);

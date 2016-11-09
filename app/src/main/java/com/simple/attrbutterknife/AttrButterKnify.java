@@ -1,4 +1,4 @@
-package com.example;
+package com.simple.attrbutterknife;
 
 import java.lang.reflect.Method;
 
