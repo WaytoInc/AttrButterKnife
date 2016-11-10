@@ -46,4 +46,5 @@ dependencies {
     apt project(':attrbutter_compiler')
     //    compile files('libs/attrbutter_compiler.jar')
     compile project(':attrbutter_annotation')
+    compile project(':attrbutter_library')
 }

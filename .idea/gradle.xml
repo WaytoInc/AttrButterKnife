@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/attrbutter_annotation" />
             <option value="$PROJECT_DIR$/attrbutter_compiler" />
+            <option value="$PROJECT_DIR$/attrbutter_library" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

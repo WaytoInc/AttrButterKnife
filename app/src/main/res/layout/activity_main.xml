@@ -6,10 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.simple.attrbutterknife.MainActivity">
 
     <TextView
@@ -21,14 +17,23 @@
     <com.simple.attrbutterknife.CustomView
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:test_enum="enum_1"
+        app:test_boolean="false"
+        app:test_color="@android:color/holo_blue_bright"
+        app:test_dimension="@dimen/activity_horizontal_margin"
+        app:test_float="22"
+        app:test_integer="13"
         app:test_string="测试string"
         app:test_string2="测试string2" />
 
     <com.simple.attrbutterknife.CustomView2
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:test_enum="enum_1"
-        app:test_string="测试string"
-        app:test_string2="测试string2" />
+        app:test_string="测试文本"
+        app:test_string2="测试文本"
+        app:test_boolean="true"
+        app:test_color="@android:color/black"
+        app:test_dimension="@dimen/activity_horizontal_margin"
+        app:test_float="33"
+        app:test_integer="66"
+        />
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example;
+package com.simple;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
-public @interface AttrBindBoolean {
+public @interface AttrBindInt {
     int id();
 
-    boolean defValue();
+    int defValue();
 }

@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/attrbutter_annotation/attrbutter_annotation.iml" filepath="$PROJECT_DIR$/attrbutter_annotation/attrbutter_annotation.iml" />
       <module fileurl="file://$PROJECT_DIR$/attrbutter_compiler/attrbutter_compiler.iml" filepath="$PROJECT_DIR$/attrbutter_compiler/attrbutter_compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/attrbutter_library/attrbutter_library.iml" filepath="$PROJECT_DIR$/attrbutter_library/attrbutter_library.iml" />
     </modules>
   </component>
 </project>

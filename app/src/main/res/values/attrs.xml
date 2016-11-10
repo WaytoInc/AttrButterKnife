@@ -6,15 +6,15 @@
         <attr name="test_boolean" format="boolean" />
         <attr name="test_dimension" format="dimension" />
         <attr name="test_color" format="color" />
-        <attr name="test_enum" format="enum" >
-            <enum name="enum_1" value="0"/>
-            <enum name="enum_2" value="0"/>
-            <enum name="enum_3" value="0"/>
-        </attr>
+        <!--<attr name="test_enum" format="enum" >-->
+            <!--<enum name="enum_1" value="0"/>-->
+            <!--<enum name="enum_2" value="0"/>-->
+            <!--<enum name="enum_3" value="0"/>-->
+        <!--</attr>-->
         <!--<attr name="test_flag" format="flag" />-->
         <attr name="test_float" format="float" />
-        <attr name="test_fraction" format="fraction" />
+        <!--<attr name="test_fraction" format="fraction" />-->
         <attr name="test_integer" format="integer" />
-        <attr name="test_reference" format="reference" />
+        <!--<attr name="test_reference" format="reference" />-->
     </declare-styleable>
 </resources>
