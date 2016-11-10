@@ -1,7 +1,7 @@
 # 自定义属性的butterknife
 
 学习butterknife的练手项目，只是为了让获取自定义属性更方便。
-****
+
 ```
 public class CustomView extends View {
 
@@ -19,6 +19,8 @@ public class CustomView extends View {
     float testFloat;
     @AttrBindInt(id = R.styleable.CustomView_test_integer, defValue = 1)
     int testInteger;
+    
+  }
 ```
 
 ```
@@ -35,7 +37,7 @@ public class CustomView extends View {
 ```
 
 # 暂时支持的注解
-****
+
 * AttrBindString
 * AttrBindBoolean
 * AttrBindDimen
