@@ -58,6 +58,8 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
     }
 
     /**
+     * 获取支持的注解
+     *
      * @return
      */
     @Override
@@ -155,6 +157,12 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         return map;
     }
 
+    /**
+     * 解析被注解的元素
+     *
+     * @param element
+     * @param map
+     */
     private void parseBindVariable(Element element, Map<String, List<VariableElement>> map) {
         // 给属性添加的注解
         VariableElement variableElement = (VariableElement) element;
@@ -168,6 +176,10 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         variableElementList.add(variableElement);
     }
 
+    /**
+     * 生成代码
+     * @param map
+     */
     private void generate(Map<String, List<VariableElement>> map) {
         log("开始生成");
         if (null == map || map.size() == 0) {
