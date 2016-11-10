@@ -1,6 +1,7 @@
 package com.example;
 
 
+import com.google.auto.common.MoreElements;
 import com.google.auto.common.SuperficialValidation;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.ClassName;
@@ -73,6 +74,10 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
 
         annotations.add(AttrBindString.class);
         annotations.add(AttrBindBoolean.class);
+        annotations.add(AttrBindDimen.class);
+        annotations.add(AttrBindFloat.class);
+        annotations.add(AttrBindColor.class);
+        annotations.add(AttrBindInt.class);
 
         return annotations;
     }
@@ -96,9 +101,6 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         //解析 AttrBindString 注解
         for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
-//            if (element == null || !(element instanceof VariableElement)) {
-//                continue;
-//            }
             try {
                 parseBindString(element, map);
             } catch (Exception e) {
@@ -108,9 +110,6 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
         //解析 AttrBindBoolean
         for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindBoolean.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
-//            if (element == null || !(element instanceof VariableElement)) {
-//                continue;
-//            }
             try {
                 parseBindBoolean(element, map);
             } catch (Exception e) {
@@ -164,8 +163,10 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
                 continue;
             }
             // 获取包名
-            String packageName = variableElementList.get(0).getEnclosingElement()
-                    .getEnclosingElement().toString();
+//            String packageName = variableElementList.get(0).getEnclosingElement()
+//                    .getEnclosingElement().toString();
+            String packageName = MoreElements.getPackage(variableElementList.get(0))
+                    .getQualifiedName().toString();
 
             //method
             MethodSpec.Builder builder = MethodSpec.methodBuilder("bind");
@@ -188,8 +189,8 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
                 AttrBindBoolean attrBindBoolean = variableElement.getAnnotation(AttrBindBoolean.class);
                 if (attrBindBoolean != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getBoolean(" + attrBindBoolean.value() + ","
-                            + attrBindBoolean.default_value() + ")");
+                            " = ta.getBoolean(" + attrBindBoolean.id() + ","
+                            + attrBindBoolean.defValue() + ")");
                 }
 
             }
