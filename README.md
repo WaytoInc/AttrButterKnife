@@ -2,7 +2,9 @@
 
 学习butterknife的练手项目，只是为了让获取自定义属性更方便。
 
-```
+# 使用示例
+
+```java
 public class CustomView extends View {
 
     @AttrBindString(R.styleable.CustomView_test_string)
@@ -19,11 +21,28 @@ public class CustomView extends View {
     float testFloat;
     @AttrBindInt(id = R.styleable.CustomView_test_integer, defValue = 1)
     int testInteger;
-    
-  }
+
+    public CustomView(Context context) {
+        this(context, null);
+    }
+
+    public CustomView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CustomView);
+        AttrButterKnife.bind(this, ta);
+        Log.e("CustomView", "testString==" + testString);
+        Log.e("CustomView", "testString2==" + testString2);
+        Log.e("CustomView", "testBoolean==" + testBoolean);
+        Log.e("CustomView", "testDimension==" + testDimension);
+        Log.e("CustomView", "testColor==" + testColor);
+        Log.e("CustomView", "testFloat==" + testFloat);
+        Log.e("CustomView", "testInteger==" + testInteger);
+      }
+    }
 ```
 
-```
+```xml
 <com.simple.attrbutterknife.CustomView
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -36,6 +55,17 @@ public class CustomView extends View {
         app:test_string2="测试string2" />
 ```
 
+# 输出结果
+```
+E/CustomView: testString==测试string
+E/CustomView: testString2==测试string2
+E/CustomView: testBoolean==false
+E/CustomView: testDimension==32.0
+E/CustomView: testColor==-16720385
+E/CustomView: testFloat==22.0
+E/CustomView: testInteger==13
+```
+
 # 暂时支持的注解
 
 * AttrBindString
@@ -44,6 +74,37 @@ public class CustomView extends View {
 * AttrBindFloat
 * AttrBindColor
 * AttrBindInt
+
+# 如何使用
+
+* project build.gradle 需要apt的支持
+```
+ dependencies {
+         'com.neenbedankt.gradle.plugins:android-apt:1.8' // 添加引用
+    }
+```
+
+* app build.gradle
+```
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt' // 使用 apt
+...
+dependencies {
+  compile 'com.simplepeng:attrbutter_library:1.0.8'
+  apt 'com.simplepeng:attrbutter_compiler:1.0.8'
+}
+```
+
+* 源码用java7编译，可能你还需要
+```
+// 设置java 版本
+    compileOptions {
+      //>= jdk7
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+```
+
 
 # License
 
