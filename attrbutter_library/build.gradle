@@ -21,21 +21,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility 1.7
+        targetCompatibility 1.7
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-//        exclude group: 'com.android.support', module: 'support-annotations'
-//    })
-//    compile 'com.android.support:appcompat-v7:24.2.1'
-//    testCompile 'junit:junit:4.12'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':attrbutter_annotation')
 }
 
 // 这个version是区分library版本的，因此当我们需要更新library时记得修改这个version
 // 这个version影响后面的引用
-version = "1.0.1"
+version = "1.0.7"
 def siteUrl = 'https://github.com/simplepeng/AttrButterKnife'   // 项目的主页
 def gitUrl = 'https://github.com/simplepeng/AttrButterKnife.git'   // Git仓库的url
 group = "com.simplepeng"            // Maven Group ID for the artifact，一般填你唯一的包名

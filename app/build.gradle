@@ -43,6 +43,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
-    apt project(':attrbutter_compiler')
-    compile project(':attrbutter_library')
+//    apt project(':attrbutter_compiler')
+//    compile project(':attrbutter_library')
+    compile 'com.simplepeng:attrbutter_library:1.0.7'
+    apt 'com.simplepeng:attrbutter_compiler:1.0.7'
 }
