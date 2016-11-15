@@ -44,7 +44,17 @@ public class CustomView extends View {
         super(context, attrs);
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CustomView);
-//        try {
+        AttrButterKnife.bind(this, ta);
+        Log.e("CustomView", "testString==" + testString);
+        Log.e("CustomView", "testString2==" + testString2);
+        Log.e("CustomView", "testBoolean==" + testBoolean);
+        Log.e("CustomView", "testDimension==" + testDimension);
+        Log.e("CustomView", "testColor==" + testColor);
+        Log.e("CustomView", "testFloat==" + testFloat);
+        Log.e("CustomView", "testInteger==" + testInteger);
+    }
+
+//            try {
 //        testString = ta.getString(R.styleable.CustomView_test_string);
 //        testString2 = ta.getString(R.styleable.CustomView_test_string2);
 //        testBoolean = ta.getBoolean(R.styleable.CustomView_test_boolean, false);
@@ -56,14 +66,5 @@ public class CustomView extends View {
 //            ta.recycle();
 //        }
 
-        AttrButterKnife.bind(this, ta);
-        Log.e("CustomView", "testString==" + testString);
-        Log.e("CustomView", "testString2==" + testString2);
-        Log.e("CustomView", "testBoolean==" + testBoolean);
-        Log.e("CustomView", "testDimension==" + testDimension);
-        Log.e("CustomView", "testColor==" + testColor);
-        Log.e("CustomView", "testFloat==" + testFloat);
-        Log.e("CustomView", "testInteger==" + testInteger);
-    }
 
-}
+    }
