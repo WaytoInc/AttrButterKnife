@@ -1,6 +1,6 @@
 # 自定义属性的butterknife
 
-学习butterknife的练手项目，只是为了让获取自定义属性更方便。
+学习butterknife原理的项目，让获取自定义属性更快捷方便。
 
 # 使用示例
 
