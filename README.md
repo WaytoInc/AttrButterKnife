@@ -80,8 +80,8 @@ E/CustomView: testInteger==13
 ```
 ...
 dependencies {
-  compile 'com.simplepeng:attrbutter_library:1.0.9'
-  annotationProcessor 'com.simplepeng:attrbutter_compiler:1.0.9'
+     compile 'com.simplepeng:attrbutter_library:1.1.0'
+     annotationProcessor 'com.simplepeng:attrbutter_compiler:1.1.0'
 }
 ```
 
