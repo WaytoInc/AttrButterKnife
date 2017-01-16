@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
-public @interface AttrBindColor {
+public @interface AttrInt {
     int id();
 
     int defValue();

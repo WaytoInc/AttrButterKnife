@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.FIELD)
-public @interface AttrBindFloat {
+public @interface AttrFloat {
     int id();
 
     float defValue();

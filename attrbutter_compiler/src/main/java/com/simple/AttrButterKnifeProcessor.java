@@ -37,7 +37,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
 
     private static final ClassName VIEW = ClassName.get("android.view", "View");
     private static final ClassName TYPEARRAY = ClassName.get("android.content.res", "TypedArray");
-
+    private Map<String, List<VariableElement>> varMap = new LinkedHashMap<>(); // key 是类名，value 是该类的注解元素
     public static final String CLASS_SUFFIX = "_ViewBinder";
     private Messager messager;
     private Filer filer;
@@ -74,12 +74,12 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
     private Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
 
-        annotations.add(AttrBindString.class);
-        annotations.add(AttrBindBoolean.class);
-        annotations.add(AttrBindDimen.class);
-        annotations.add(AttrBindFloat.class);
-        annotations.add(AttrBindColor.class);
-        annotations.add(AttrBindInt.class);
+        annotations.add(AttrString.class);
+        annotations.add(AttrBool.class);
+        annotations.add(AttrDimen.class);
+        annotations.add(AttrFloat.class);
+        annotations.add(AttrColor.class);
+        annotations.add(AttrInt.class);
 
         return annotations;
     }
@@ -91,70 +91,74 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         //遍历所有被注解了的元素
-        Map<String, List<VariableElement>> map = findAndParseTargets(roundEnv);
+        try {
+            findAndParseTargets(roundEnv);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        Map<String, List<VariableElement>> varMap = findAndParseTargets(roundEnv);
         // 生成辅助类
-        generate(map);
+        generateCode();
         return true;
     }
 
     private Map<String, List<VariableElement>> findAndParseTargets(RoundEnvironment roundEnv) {
-        Map<String, List<VariableElement>> map = new LinkedHashMap<>(); // key 是类名，value 是该类的注解元素
 
-        //解析 AttrBindString 注解
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindString.class)) {
+        //解析 AttrString 注解
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrString.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        //解析 AttrBindBoolean
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindBoolean.class)) {
+        //解析 AttrBool
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBool.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        //解析 AttrBindColor
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindColor.class)) {
+        //解析 AttrColor
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrColor.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        //解析 AttrBindDimen
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindDimen.class)) {
+        //解析 AttrDimen
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrDimen.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        //解析 AttrBindFloat
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindFloat.class)) {
+        //解析 AttrFloat
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrFloat.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        //解析 AttrBindInt
-        for (Element element : roundEnv.getElementsAnnotatedWith(AttrBindInt.class)) {
+        //解析 AttrInt
+        for (Element element : roundEnv.getElementsAnnotatedWith(AttrInt.class)) {
             if (!SuperficialValidation.validateElement(element)) continue;
             try {
-                parseBindVariable(element, map);
+                parseBindVariable(element, varMap);
             } catch (Exception e) {
 
             }
         }
-        return map;
+        return varMap;
     }
 
     /**
@@ -178,16 +182,15 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
 
     /**
      * 生成代码
-     * @param map
      */
-    private void generate(Map<String, List<VariableElement>> map) {
+    private void generateCode() {
         log("开始生成");
-        if (null == map || map.size() == 0) {
+        if (null == varMap || varMap.size() == 0) {
             return;
         }
 
-        for (String className : map.keySet()) {
-            List<VariableElement> variableElementList = map.get(className);
+        for (String className : varMap.keySet()) {
+            List<VariableElement> variableElementList = varMap.get(className);
             if (variableElementList == null || variableElementList.isEmpty()) {
                 continue;
             }
@@ -208,45 +211,45 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
 
                 String varName = variableElement.getSimpleName().toString();
 
-                AttrBindString attrBindString = variableElement.getAnnotation(AttrBindString.class);
-                if (attrBindString != null) {
+                AttrString attrString = variableElement.getAnnotation(AttrString.class);
+                if (attrString != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getString(" + attrBindString.value() + ")");
+                            " = ta.getString(" + attrString.value() + ")");
                 }
 
-                AttrBindBoolean attrBindBoolean = variableElement.getAnnotation(AttrBindBoolean.class);
-                if (attrBindBoolean != null) {
+                AttrBool attrBool = variableElement.getAnnotation(AttrBool.class);
+                if (attrBool != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getBoolean(" + attrBindBoolean.id() + ","
-                            + attrBindBoolean.defValue() + ")");
+                            " = ta.getBoolean(" + attrBool.id() + ","
+                            + attrBool.defValue() + ")");
                 }
 
-                AttrBindColor attrBindColor = variableElement.getAnnotation(AttrBindColor.class);
-                if (attrBindColor != null) {
+                AttrColor attrColor = variableElement.getAnnotation(AttrColor.class);
+                if (attrColor != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getColor(" + attrBindColor.id() + ","
-                            + attrBindColor.defValue() + ")");
+                            " = ta.getColor(" + attrColor.id() + ","
+                            + attrColor.defValue() + ")");
                 }
 
-                AttrBindDimen attrBindDimen = variableElement.getAnnotation(AttrBindDimen.class);
-                if (attrBindDimen != null) {
+                AttrDimen attrDimen = variableElement.getAnnotation(AttrDimen.class);
+                if (attrDimen != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getDimension(" + attrBindDimen.id() + ","
-                            + attrBindDimen.defValue() + "f)");
+                            " = ta.getDimension(" + attrDimen.id() + ","
+                            + attrDimen.defValue() + "f)");
                 }
 
-                AttrBindFloat attrBindFloat = variableElement.getAnnotation(AttrBindFloat.class);
-                if (attrBindFloat != null) {
+                AttrFloat attrFloat = variableElement.getAnnotation(AttrFloat.class);
+                if (attrFloat != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getFloat(" + attrBindFloat.id() + ","
-                            + attrBindFloat.defValue() + "f)");
+                            " = ta.getFloat(" + attrFloat.id() + ","
+                            + attrFloat.defValue() + "f)");
                 }
 
-                AttrBindInt attrBindInt = variableElement.getAnnotation(AttrBindInt.class);
-                if (attrBindInt != null) {
+                AttrInt attrInt = variableElement.getAnnotation(AttrInt.class);
+                if (attrInt != null) {
                     builder.addStatement("view." + varName +
-                            " = ta.getInteger(" + attrBindInt.id() + ","
-                            + attrBindInt.defValue() + ")");
+                            " = ta.getInteger(" + attrInt.id() + ","
+                            + attrInt.defValue() + ")");
                 }
 
             }
@@ -255,7 +258,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
             builder.endControlFlow();
             MethodSpec methodSpec = builder.build();
             //class
-            TypeSpec typeSpec = creatTypeSpec(methodSpec, className + CLASS_SUFFIX);
+            TypeSpec typeSpec = createTypeSpec(methodSpec, className + CLASS_SUFFIX);
             //file
             brewJava(packageName, typeSpec);
         }
@@ -268,7 +271,7 @@ public class AttrButterKnifeProcessor extends AbstractProcessor {
      * @param className
      * @return
      */
-    private TypeSpec creatTypeSpec(MethodSpec methodSpec, String className) {
+    private TypeSpec createTypeSpec(MethodSpec methodSpec, String className) {
         TypeSpec typeSpec = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(methodSpec)

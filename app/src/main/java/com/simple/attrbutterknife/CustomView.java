@@ -7,12 +7,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.simple.AttrBindBoolean;
-import com.simple.AttrBindColor;
-import com.simple.AttrBindDimen;
-import com.simple.AttrBindFloat;
-import com.simple.AttrBindInt;
-import com.simple.AttrBindString;
+import com.simple.AttrBool;
+import com.simple.AttrColor;
+import com.simple.AttrDimen;
+import com.simple.AttrFloat;
+import com.simple.AttrInt;
+import com.simple.AttrString;
 import com.simple.attrbutter_library.AttrButterKnife;
 
 /**
@@ -21,19 +21,19 @@ import com.simple.attrbutter_library.AttrButterKnife;
 
 public class CustomView extends View {
 
-    @AttrBindString(R.styleable.CustomView_test_string)
+    @AttrString(R.styleable.CustomView_test_string)
     String testString;
-    @AttrBindString(R.styleable.CustomView_test_string2)
+    @AttrString(R.styleable.CustomView_test_string2)
     String testString2;
-    @AttrBindBoolean(id = R.styleable.CustomView_test_boolean, defValue = true)
+    @AttrBool(id = R.styleable.CustomView_test_boolean, defValue = true)
     boolean testBoolean;
-    @AttrBindDimen(id = R.styleable.CustomView_test_dimension, defValue = 19.0f)
+    @AttrDimen(id = R.styleable.CustomView_test_dimension, defValue = 19.0f)
     float testDimension;
-    @AttrBindColor(id = R.styleable.CustomView_test_color, defValue = Color.BLACK)
+    @AttrColor(id = R.styleable.CustomView_test_color, defValue = Color.BLACK)
     int testColor;
-    @AttrBindFloat(id = R.styleable.CustomView_test_float, defValue = 2.3f)
+    @AttrFloat(id = R.styleable.CustomView_test_float, defValue = 2.3f)
     float testFloat;
-    @AttrBindInt(id = R.styleable.CustomView_test_integer, defValue = 1)
+    @AttrInt(id = R.styleable.CustomView_test_integer, defValue = 1)
     int testInteger;
 
     public CustomView(Context context) {
