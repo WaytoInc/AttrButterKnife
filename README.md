@@ -1,25 +1,25 @@
 # 自定义属性的butterknife
 
-学习butterknife原理的项目，让获取自定义属性更快捷方便。
+学习butterknife然后自己写一个获取自定义属性的项目，让获取自定义属性更快捷方便，一个注解就搞定。
 
 # 使用示例
 
 ```java
 public class CustomView extends View {
 
-    @AttrBindString(R.styleable.CustomView_test_string)
+    @AttrString(R.styleable.CustomView_test_string)
     String testString;
-    @AttrBindString(R.styleable.CustomView_test_string2)
+    @AttrString(R.styleable.CustomView_test_string2)
     String testString2;
-    @AttrBindBoolean(id = R.styleable.CustomView_test_boolean, defValue = true)
+    @AttrBool(id = R.styleable.CustomView_test_boolean, defValue = true)
     boolean testBoolean;
-    @AttrBindDimen(id = R.styleable.CustomView_test_dimension, defValue = 19.0f)
+    @AttrDimen(id = R.styleable.CustomView_test_dimension, defValue = 19.0f)
     float testDimension;
-    @AttrBindColor(id = R.styleable.CustomView_test_color, defValue = Color.BLACK)
+    @AttrColor(id = R.styleable.CustomView_test_color, defValue = Color.BLACK)
     int testColor;
-    @AttrBindFloat(id = R.styleable.CustomView_test_float, defValue = 2.3f)
+    @AttrFloat(id = R.styleable.CustomView_test_float, defValue = 2.3f)
     float testFloat;
-    @AttrBindInt(id = R.styleable.CustomView_test_integer, defValue = 1)
+    @AttrInt(id = R.styleable.CustomView_test_integer, defValue = 1)
     int testInteger;
 
     public CustomView(Context context) {
@@ -38,7 +38,6 @@ public class CustomView extends View {
         Log.e("CustomView", "testColor==" + testColor);
         Log.e("CustomView", "testFloat==" + testFloat);
         Log.e("CustomView", "testInteger==" + testInteger);
-      }
     }
 ```
 
@@ -68,30 +67,21 @@ E/CustomView: testInteger==13
 
 # 暂时支持的注解
 
-* AttrBindString
-* AttrBindBoolean
-* AttrBindDimen
-* AttrBindFloat
-* AttrBindColor
-* AttrBindInt
+* AttrString
+* AttrBool
+* AttrDimen
+* AttrFloat
+* AttrColor
+* AttrInt
 
 # 如何使用
 
-* project build.gradle 需要apt的支持
-```
- dependencies {
-         'com.neenbedankt.gradle.plugins:android-apt:1.8' // 添加引用
-    }
-```
-
 * app build.gradle
 ```
-apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt' // 使用 apt
 ...
 dependencies {
-  compile 'com.simplepeng:attrbutter_library:1.0.8'
-  apt 'com.simplepeng:attrbutter_compiler:1.0.8'
+  compile 'com.simplepeng:attrbutter_library:1.0.9'
+  annotationProcessor 'com.simplepeng:attrbutter_compiler:1.0.9'
 }
 ```
 
@@ -108,7 +98,7 @@ dependencies {
 
 # License
 
-Copyright 2016 Simplepeng
+Copyright 2016 Simple Peng
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
